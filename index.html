@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drona Landing</title>  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">  <style>
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      background: linear-gradient(145deg,#dce3ec,#c8d0da);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #1a2a3a;
+    }
+
+    .cards {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .card {
+      width: 220px;
+      padding: 20px;
+      border-radius: 25px;
+      background: linear-gradient(145deg,#eef3fc,#dfe6f0);
+      box-shadow: 10px 10px 20px rgba(0,0,0,0.1), -6px -6px 12px rgba(255,255,255,0.7);
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 15px;
+      border-radius: 20px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+  </style></head><body><div class="container">
+  <h1>Drona Study Portal</h1>  <div class="cards"><div class="card" onclick="openCourse(151)">
+  <h3>Drona JEE</h3>
+  <p>Engineering</p>
+  <button>Enter</button>
+</div>
+
+<div class="card" onclick="openCourse(152)">
+  <h3>Drona NEET</h3>
+  <p>Medical</p>
+  <button>Enter</button>
+</div>
+
+  </div>
+</div><script>
+function openCourse(id){
+  window.location.href =
+  "https://mj-study-squad.vercel.app/api/proxy?path=MissionJeet/content/index.php?course_id=" + id + "&tab=content";
+}
+</script></body>
+</html>
