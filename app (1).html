@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Study Squad</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css"/>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+<style>
+:root{
+  --bg:#dde4f0;--surface:#e4eaf5;
+  --sd:#b8c2d8;--sl:#ffffff;
+  --tp:#1a2340;--ts:#4a5568;
+  --blue:#3b6ef5;--purple:#8b5cf6;
+  --orange:#f59e0b;--green:#10b981;--pink:#ec4899;
+  --red:#ef4444;
+  --neu-out:6px 6px 14px var(--sd),-6px -6px 14px var(--sl);
+  --neu-in:inset 4px 4px 10px var(--sd),inset -4px -4px 10px var(--sl);
+  --neu-sm:4px 4px 10px var(--sd),-4px -4px 10px var(--sl);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:var(--tp);overflow-x:hidden;}
+
+/* ── PAGES ── */
+.page{display:none;min-height:100vh;animation:fadeUp 0.35s ease both;}
+.page.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 18px;background:var(--surface);
+  box-shadow:var(--neu-out);border-radius:0 0 18px 18px;
+}
+.nav-left{display:flex;align-items:center;gap:10px;}
+.back-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--surface);border:none;box-shadow:var(--neu-sm);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--tp);transition:all 0.2s;flex-shrink:0;
+}
+.back-btn:hover{box-shadow:var(--neu-in);}
+.nav-logo{font-weight:900;font-size:0.95rem;color:var(--blue);}
+.nav-badge{
+  background:var(--surface);box-shadow:var(--neu-in);
+  border-radius:50px;padding:4px 12px;
+  font-size:0.68rem;font-weight:700;color:var(--ts);
+  max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{
+  padding:12px 18px 0;display:flex;align-items:center;gap:6px;
+  font-size:0.7rem;font-weight:700;color:var(--ts);flex-wrap:wrap;
+}
+.bc-link{color:var(--blue);cursor:pointer;}
+.bc-link:hover{opacity:0.7;}
+.bc-sep{opacity:0.4;}
+
+/* ════════════════════════════
+   LANDING PAGE
+════════════════════════════ */
+.hero{padding:24px 18px 14px;display:flex;flex-direction:column;gap:14px;}
+.hero-card{background:var(--surface);border-radius:24px;padding:24px 20px;box-shadow:var(--neu-out);}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface);box-shadow:var(--neu-in);
+  border-radius:50px;padding:5px 14px;
+  font-size:0.7rem;font-weight:700;color:var(--orange);margin-bottom:12px;
+}
+.hero-title{font-size:1.8rem;font-weight:900;line-height:1.2;margin-bottom:10px;}
+.grad-jee{background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.grad-neet{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.grad-squad{color:var(--blue);}
+.hero-sub{font-size:0.84rem;color:var(--ts);line-height:1.6;margin-bottom:16px;}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  color:white;border:none;padding:11px 22px;border-radius:50px;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.86rem;
+  cursor:pointer;box-shadow:4px 4px 12px rgba(59,110,245,0.3);transition:all 0.2s;
+}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-ghost{
+  background:transparent;border:none;color:var(--blue);
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.86rem;cursor:pointer;padding:11px 12px;
+}
+.formula-cards{display:flex;flex-direction:column;gap:9px;}
+.formula-card{background:var(--surface);border-radius:14px;padding:11px 15px;box-shadow:var(--neu-out);}
+.formula-text{font-family:'Space Grotesk',monospace;font-size:0.88rem;font-weight:600;margin-bottom:2px;}
+.math{color:var(--blue);}.physics{color:var(--purple);}.chem{color:var(--orange);}
+.formula-label{font-size:0.68rem;color:var(--ts);font-weight:600;}
+
+.stats-bar{
+  margin:0 18px;background:var(--surface);border-radius:16px;
+  padding:16px;box-shadow:var(--neu-out);display:flex;justify-content:space-around;
+}
+.stat-item{text-align:center;}
+.stat-num{font-size:1.3rem;font-weight:900;color:var(--blue);display:block;}
+.stat-label{font-size:0.66rem;color:var(--ts);font-weight:600;}
+.stat-div{width:1px;background:var(--sd);opacity:0.4;}
+
+.batch-section{padding:22px 18px 16px;}
+.sec-top{text-align:center;margin-bottom:18px;}
+.sec-tag{font-size:0.66rem;font-weight:700;letter-spacing:2px;color:var(--blue);text-transform:uppercase;display:block;margin-bottom:5px;}
+.sec-title{font-size:1.3rem;font-weight:900;}
+.batch-grid{display:flex;flex-direction:column;gap:14px;}
+.batch-card{
+  background:var(--surface);border-radius:20px;box-shadow:var(--neu-out);
+  overflow:hidden;cursor:pointer;transition:all 0.25s ease;border:none;
+  width:100%;text-align:left;font-family:'Nunito',sans-serif;color:var(--tp);
+}
+.batch-card:hover{transform:translateY(-3px);box-shadow:8px 8px 20px var(--sd),-8px -8px 20px var(--sl);}
+.batch-card:active{transform:translateY(0);box-shadow:var(--neu-in);}
+.batch-ph{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;}
+.batch-ph.jee{background:linear-gradient(135deg,#dde8ff,#c8d0f5);}
+.batch-ph.neet{background:linear-gradient(135deg,#d0f5e8,#c0e8d8);}
+.batch-img{width:100%;height:160px;object-fit:cover;display:block;}
+.batch-body{padding:14px 16px;}
+.batch-tag{
+  display:inline-block;font-size:0.63rem;font-weight:700;letter-spacing:1px;
+  text-transform:uppercase;padding:3px 10px;border-radius:50px;margin-bottom:7px;
+  background:var(--surface);box-shadow:var(--neu-in);
+}
+.batch-tag.jee{color:var(--blue);}.batch-tag.neet{color:var(--green);}
+.batch-name{font-size:0.95rem;font-weight:900;margin-bottom:3px;line-height:1.3;}
+.batch-subj{font-size:0.75rem;color:var(--ts);font-weight:600;margin-bottom:10px;}
+.batch-foot{display:flex;align-items:center;justify-content:space-between;}
+.batch-cta{
+  background:var(--surface);border:none;padding:7px 14px;border-radius:50px;
+  font-family:'Nunito',sans-serif;font-weight:700;font-size:0.76rem;cursor:pointer;box-shadow:var(--neu-sm);
+}
+.batch-cta.jee{color:var(--blue);}.batch-cta.neet{color:var(--green);}
+.footer-note{text-align:center;padding:14px 18px 36px;font-size:0.76rem;color:var(--ts);font-style:italic;font-weight:600;}
+
+/* ════════════════════════════
+   COURSE PAGE
+════════════════════════════ */
+.course-hero{
+  margin:12px 18px;background:var(--surface);
+  border-radius:20px;box-shadow:var(--neu-out);overflow:hidden;
+}
+.course-thumb{width:100%;height:190px;object-fit:cover;display:block;}
+.course-thumb-ph{
+  width:100%;height:190px;display:flex;align-items:center;
+  justify-content:center;font-size:4rem;
+  background:linear-gradient(135deg,#dde8ff,#c8d0f5);
+}
+.course-info{padding:14px 16px;}
+.course-kicker{
+  font-size:0.6rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--blue);
+  display:flex;align-items:center;gap:5px;margin-bottom:5px;
+}
+.kicker-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);}
+.course-title{font-size:1.2rem;font-weight:900;margin-bottom:7px;}
+.course-pills{display:flex;gap:7px;flex-wrap:wrap;}
+.cpill{
+  font-size:0.6rem;font-weight:700;padding:3px 10px;border-radius:50px;
+  background:var(--surface);box-shadow:var(--neu-in);
+}
+.cpill-new{color:var(--green);}.cpill-trend{color:var(--orange);}
+
+/* TABS */
+.tabs-wrap{
+  margin:12px 18px 0;background:var(--surface);
+  border-radius:14px;box-shadow:var(--neu-out);
+  display:flex;overflow:hidden;
+}
+.tab-btn{
+  flex:1;padding:12px;border:none;cursor:pointer;
+  font-family:'Nunito',sans-serif;font-weight:800;font-size:0.76rem;
+  background:transparent;color:var(--ts);
+  letter-spacing:0.5px;text-transform:uppercase;transition:all 0.2s;position:relative;
+}
+.tab-btn.active{color:var(--blue);box-shadow:var(--neu-in);}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:0;left:20%;right:20%;
+  height:2px;background:var(--blue);border-radius:2px;
+}
+
+/* OVERVIEW */
+.ov-wrap{padding:14px 18px;}
+.ov-container{
+  background:var(--surface);border-radius:16px;
+  box-shadow:var(--neu-out);overflow:hidden;min-height:300px;
+}
+.ov-loading{padding:40px;text-align:center;}
+
+/* CONTENT */
+.ct-wrap{padding:0 18px 30px;}
+.sec-label{
+  font-size:0.63rem;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;color:var(--blue);
+  margin:16px 0 10px;display:flex;align-items:center;gap:7px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--sd);opacity:0.4;}
+
+/* LIVE SECTION */
+.live-section{
+  background:var(--surface);border-radius:18px;
+  box-shadow:var(--neu-out);padding:16px;margin-bottom:16px;
+  border:2px solid rgba(239,68,68,0.2);
+}
+.live-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.live-badge{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(239,68,68,0.1);border-radius:50px;
+  padding:5px 12px;font-size:0.65rem;font-weight:800;
+  color:var(--red);letter-spacing:1px;text-transform:uppercase;
+}
+.live-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--red);
+  animation:livePulse 1.2s ease-in-out infinite;
+}
+@keyframes livePulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+.live-title{font-size:0.9rem;font-weight:800;}
+.live-card{
+  background:var(--bg);border-radius:12px;padding:13px;
+  box-shadow:var(--neu-in);cursor:pointer;border:none;
+  width:100%;text-align:left;font-family:'Nunito',sans-serif;color:var(--tp);
+  display:flex;align-items:center;gap:12px;transition:all 0.2s;
+}
+.live-card:hover{box-shadow:var(--neu-out);}
+.live-icon{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--red),#ff6b6b);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  box-shadow:3px 3px 8px rgba(239,68,68,0.3);
+}
+.live-info{flex:1;}
+.live-name{font-size:0.88rem;font-weight:800;margin-bottom:2px;}
+.live-meta{font-size:0.7rem;color:var(--ts);font-weight:600;}
+.live-join{
+  background:var(--red);color:white;border:none;
+  padding:7px 14px;border-radius:50px;font-family:'Nunito',sans-serif;
+  font-weight:700;font-size:0.72rem;cursor:pointer;flex-shrink:0;
+  box-shadow:3px 3px 8px rgba(239,68,68,0.3);
+}
+
+/* FOLDER CARDS */
+.folder-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.folder-card{
+  background:var(--surface);border-radius:14px;
+  box-shadow:var(--neu-out);overflow:hidden;
+  cursor:pointer;border:none;width:100%;
+  text-align:left;font-family:'Nunito',sans-serif;
+  color:var(--tp);transition:all 0.22s ease;
+  display:flex;align-items:center;
+}
+.folder-card:hover{transform:translateY(-2px);box-shadow:7px 7px 16px var(--sd),-7px -7px 16px var(--sl);}
+.folder-card:active{box-shadow:var(--neu-in);transform:translateY(0);}
+.folder-img{width:68px;height:68px;object-fit:cover;flex-shrink:0;}
+.folder-img-ph{
+  width:68px;height:68px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;background:linear-gradient(135deg,#dde8ff,#c8d0f5);
+}
+.folder-body{flex:1;padding:11px 13px;}
+.folder-name{font-size:0.86rem;font-weight:800;margin-bottom:2px;line-height:1.3;}
+.folder-sub{font-size:0.67rem;color:var(--ts);font-weight:600;}
+.folder-arr{padding-right:13px;color:var(--blue);opacity:0.6;font-size:1rem;}
+
+/* VIDEO CARDS */
+.video-grid{display:flex;flex-direction:column;gap:9px;}
+.video-card{
+  background:var(--surface);border-radius:13px;
+  padding:12px 14px;box-shadow:var(--neu-out);
+  display:flex;align-items:center;gap:11px;
+  cursor:pointer;border:none;width:100%;
+  text-align:left;font-family:'Nunito',sans-serif;
+  color:var(--tp);transition:all 0.22s ease;
+}
+.video-card:hover{transform:translateY(-2px);box-shadow:6px 6px 14px var(--sd),-6px -6px 14px var(--sl);}
+.video-card:active{box-shadow:var(--neu-in);}
+.play-btn{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--purple));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;color:white;
+  box-shadow:3px 3px 8px rgba(59,110,245,0.3);
+}
+.video-info{flex:1;}
+.video-name{font-size:0.84rem;font-weight:700;margin-bottom:2px;line-height:1.3;}
+.video-meta{font-size:0.67rem;color:var(--ts);font-weight:600;}
+.vid-badge{
+  background:var(--surface);box-shadow:var(--neu-in);
+  border-radius:50px;padding:3px 9px;
+  font-size:0.62rem;font-weight:700;color:var(--orange);flex-shrink:0;
+}
+
+/* STATE BOXES */
+.state-box{padding:48px 18px;text-align:center;}
+.state-loader{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--surface);box-shadow:var(--neu-out);
+  margin:0 auto 12px;display:flex;align-items:center;justify-content:center;
+  animation:pulse 1.2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{box-shadow:var(--neu-out);}50%{box-shadow:var(--neu-in);}}
+.state-box p{font-weight:700;color:var(--ts);font-size:0.84rem;}
+.retry-btn{
+  margin-top:12px;background:var(--surface);border:none;
+  padding:9px 20px;border-radius:50px;font-family:'Nunito',sans-serif;
+  font-weight:700;color:var(--blue);cursor:pointer;box-shadow:var(--neu-sm);
+}
+
+/* ════════════════════════════
+   PLAYER PAGE
+════════════════════════════ */
+#playerPage{
+  background:#0f0f1a;color:white;min-height:100vh;
+  display:none;flex-direction:column;
+}
+#playerPage.active{display:flex;}
+.player-nav{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(10px);flex-shrink:0;
+}
+.player-back{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,0.1);border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:white;font-size:1rem;flex-shrink:0;
+  transition:all 0.2s;
+}
+.player-back:hover{background:rgba(255,255,255,0.2);}
+.player-title{font-weight:700;font-size:0.88rem;flex:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.player-wrap{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:0;background:#000;
+}
+video{width:100%;max-height:calc(100vh - 60px);display:block;}
+.player-loading{
+  position:fixed;inset:0;background:#0f0f1a;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10;
+}
+.spin{
+  width:50px;height:50px;border-radius:50%;
+  border:3px solid rgba(139,92,246,0.3);border-top-color:var(--purple);
+  animation:rot 0.8s linear infinite;margin-bottom:14px;
+}
+@keyframes rot{to{transform:rotate(360deg)}}
+.player-loading p{font-size:0.86rem;font-weight:600;opacity:0.7;}
+.player-error{
+  position:fixed;inset:0;background:#0f0f1a;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  z-index:10;padding:24px;text-align:center;
+}
+.player-error h3{font-size:1rem;font-weight:800;margin:12px 0 6px;}
+.player-error p{font-size:0.82rem;opacity:0.7;margin-bottom:16px;}
+.player-error button{
+  background:var(--purple);color:white;border:none;
+  padding:10px 22px;border-radius:50px;
+  font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;
+}
+
+/* Plyr custom */
+.plyr--video{height:calc(100vh - 60px);}
+.plyr--full-ui input[type=range]{color:var(--purple);}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════
+     LANDING PAGE
+═══════════════════════════════ -->
+<div class="page active" id="landingPage">
+  <nav>
+    <div class="nav-left">
+      <div class="nav-logo">🎯 STUDY SQUAD</div>
+    </div>
+    <button class="nav-badge" style="border:none;cursor:pointer;background:var(--surface);box-shadow:var(--neu-sm);"
+      onclick="scrollTo({top:document.querySelector('.batch-section').offsetTop,behavior:'smooth'})">
+      🚀 Start
+    </button>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-card">
+      <div class="hero-badge">⚡ JEE & NEET 2026</div>
+      <h1 class="hero-title">
+        Master <span class="grad-jee">JEE</span> &<br/>
+        <span class="grad-neet">NEET</span> with<br/>
+        <span class="grad-squad">Study Squad</span>
+      </h1>
+      <p class="hero-sub">India's most comprehensive learning platform. Premium video lectures, study materials — all for free.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="scrollTo({top:document.querySelector('.batch-section').offsetTop,behavior:'smooth'})">Explore Batches →</button>
+        <button class="btn-ghost">Learn More</button>
+      </div>
+    </div>
+    <div class="formula-cards">
+      <div class="formula-card"><div class="formula-text math">∫₀^∞ e^{-x²} dx = √π/2</div><div class="formula-label">Gaussian Integral — Mathematics</div></div>
+      <div class="formula-card"><div class="formula-text physics">E = mc² | F = dp/dt</div><div class="formula-label">Mass-Energy Equivalence — Physics</div></div>
+      <div class="formula-card"><div class="formula-text chem">K_eq = [C]ᶜ[D]ᵈ / [A]ᵃ[B]ᵇ</div><div class="formula-label">Chemical Equilibrium — Chemistry</div></div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item"><span class="stat-num">50k+</span><span class="stat-label">Active Students</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-num">1000+</span><span class="stat-label">Video Lectures</span></div>
+    <div class="stat-div"></div>
+    <div class="stat-item"><span class="stat-num">24/7</span><span class="stat-label">Study Access</span></div>
+  </div>
+
+  <div class="batch-section">
+    <div class="sec-top">
+      <span class="sec-tag">Available Batches</span>
+      <div class="sec-title">Choose Your Batch</div>
+    </div>
+    <div class="batch-grid">
+      <!-- JEE -->
+      <button class="batch-card" onclick="openCourse({id:'151',name:'Drona JEE',icon:'📚',type:'jee'})">
+        <div class="batch-ph jee">📚</div>
+        <div class="batch-body">
+          <span class="batch-tag jee">JEE 2026</span>
+          <div class="batch-name">Drona JEE — Class 11th</div>
+          <div class="batch-subj">Physics, Chemistry & Mathematics</div>
+          <div class="batch-foot">
+            <span class="batch-cta jee">Start Learning →</span>
+            <span>🎯</span>
+          </div>
+        </div>
+      </button>
+      <!-- NEET -->
+      <button class="batch-card" onclick="openCourse({id:'152',name:'Drona NEET',icon:'🔬',type:'neet'})">
+        <div class="batch-ph neet">🔬</div>
+        <div class="batch-body">
+          <span class="batch-tag neet">NEET 2026</span>
+          <div class="batch-name">Drona NEET — OG Kota Batch</div>
+          <div class="batch-subj">Physics, Chemistry & Biology</div>
+          <div class="batch-foot">
+            <span class="batch-cta neet">Start Learning →</span>
+            <span>🩺</span>
+          </div>
+        </div>
+      </button>
+    </div>
+  </div>
+  <div class="footer-note">"The only limit is your dedication — we provide the rest." 🚀</div>
+</div>
+
+<!-- ═══════════════════════════════
+     COURSE PAGE
+═══════════════════════════════ -->
+<div class="page" id="coursePage">
+  <nav>
+    <div class="nav-left">
+      <button class="back-btn" id="courseBackBtn">←</button>
+      <div class="nav-logo">🎯 STUDY SQUAD</div>
+    </div>
+    <div class="nav-badge" id="courseNavBadge">Course</div>
+  </nav>
+
+  <div class="breadcrumb" id="courseBreadcrumb"></div>
+
+  <!-- Course Hero -->
+  <div class="course-hero">
+    <div class="course-thumb-ph" id="courseThumbPh">📚</div>
+    <div class="course-info">
+      <div class="course-kicker"><div class="kicker-dot"></div> COURSE</div>
+      <div class="course-title" id="courseTitleEl">Loading...</div>
+      <div class="course-pills">
+        <span class="cpill cpill-new">NEW</span>
+        <span class="cpill cpill-trend">TRENDING</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-wrap">
+    <button class="tab-btn active" id="tabOv" onclick="switchTab('ov')">Overview</button>
+    <button class="tab-btn" id="tabCt" onclick="switchTab('ct')">Content</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div id="ovPane">
+    <div class="ov-wrap">
+      <div class="ov-container" id="ovContainer">
+        <div class="ov-loading state-box">
+          <div class="state-loader">⏳</div>
+          <p>Loading overview...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="ctPane" style="display:none;">
+    <div class="ct-wrap">
+      <div class="breadcrumb" id="folderBreadcrumb" style="padding:12px 0 4px;"></div>
+
+      <!-- Live section (hidden by default, shown if live detected) -->
+      <div id="liveSection" style="display:none;">
+        <div class="sec-label">🔴 Live Now</div>
+        <div class="live-section">
+          <div class="live-header">
+            <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+            <div class="live-title" id="liveTitleEl">Live Class</div>
+          </div>
+          <div id="liveCards"></div>
+        </div>
+      </div>
+
+      <!-- Content state -->
+      <div id="ctState" class="state-box">
+        <div class="state-loader">⏳</div>
+        <p>Fetching content...</p>
+      </div>
+      <div id="ctError" style="display:none;" class="state-box">
+        <div style="font-size:2rem;margin-bottom:10px;">😕</div>
+        <p id="ctErrorMsg">Content load nahi hua.</p>
+        <button class="retry-btn" onclick="loadCourseContent()">🔄 Retry</button>
+      </div>
+      <div id="ctContent" style="display:none;">
+        <div id="foldersWrap" style="display:none;">
+          <div class="sec-label">📁 Folders</div>
+          <div class="folder-grid" id="folderGrid"></div>
+        </div>
+        <div id="videosWrap" style="display:none;">
+          <div class="sec-label">🎬 Videos</div>
+          <div class="video-grid" id="videoGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════
+     PLAYER PAGE
+═══════════════════════════════ -->
+<div class="page" id="playerPage">
+  <div class="player-nav">
+    <button class="player-back" id="playerBackBtn">←</button>
+    <div class="player-title" id="playerTitleEl">Video</div>
+  </div>
+  <div class="player-wrap">
+    <div class="player-loading" id="playerLoading">
+      <div class="spin"></div>
+      <p id="playerLoadingText">Loading video...</p>
+    </div>
+    <div class="player-error" id="playerError">
+      <div style="font-size:2.5rem;">😕</div>
+      <h3>Video load nahi hua</h3>
+      <p id="playerErrorMsg">Stream unavailable.</p>
+      <button onclick="goBack()">← Wapas Jao</button>
+    </div>
+    <video id="playerVideo" playsinline></video>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════
+const PROXY = "https://mj-study-squad.vercel.app/api/proxy";
+const folderIcons = ["📐","⚗️","🔭","📊","🧮","🔬","📖","⚡","🌊","🧲","🎯","💡","🧪","📡","🔢"];
+
+// ── State ──
+let appState = {
+  page: "landing",        // landing | course | player
+  course: null,           // {id, name, icon, type}
+  folderId: "",
+  folderTitle: "",
+  currentTab: "ov",
+  ovLoaded: false,
+  ctLoaded: false,
+  navStack: [],           // history stack
+  playerHls: null,
+  plyrInstance: null,
+};
+
+// ══════════════════════════════════════
+// PAGE NAVIGATION
+// ══════════════════════════════════════
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const el = document.getElementById(id);
+  el.classList.add("active");
+  if (id === "playerPage") el.style.display = "flex";
+  else el.style.display = "";
+  appState.page = id.replace("Page","");
+  window.scrollTo(0,0);
+}
+
+function goBack() {
+  if (appState.navStack.length === 0) return;
+  const prev = appState.navStack.pop();
+  prev();
+}
+
+function pushNav(fn) {
+  appState.navStack.push(fn);
+}
+
+// ══════════════════════════════════════
+// LANDING → COURSE
+// ══════════════════════════════════════
+function openCourse(course) {
+  appState.course = course;
+  appState.folderId = "";
+  appState.folderTitle = "";
+  appState.ovLoaded = false;
+  appState.ctLoaded = false;
+  appState.currentTab = "ov";
+  appState.navStack = [];
+
+  // Update course UI
+  document.getElementById("courseNavBadge").textContent = course.name;
+  document.getElementById("courseThumbPh").textContent = course.icon;
+  document.getElementById("courseTitleEl").textContent = course.name;
+
+  // Back → landing
+  document.getElementById("courseBackBtn").onclick = () => {
+    destroyPlayer();
+    showPage("landingPage");
+    appState.navStack = [];
+  };
+
+  // Switch to overview tab
+  switchTab("ov");
+  updateCourseBreadcrumb();
+  showPage("coursePage");
+
+  // Load overview
+  loadOverview();
+}
+
+// ══════════════════════════════════════
+// TABS
+// ══════════════════════════════════════
+function switchTab(tab) {
+  appState.currentTab = tab;
+  document.getElementById("tabOv").classList.toggle("active", tab==="ov");
+  document.getElementById("tabCt").classList.toggle("active", tab==="ct");
+  document.getElementById("ovPane").style.display = tab==="ov" ? "block" : "none";
+  document.getElementById("ctPane").style.display = tab==="ct" ? "block" : "none";
+  if (tab==="ct" && !appState.ctLoaded) loadCourseContent();
+}
+
+// ══════════════════════════════════════
+// OVERVIEW — load in iframe
+// ══════════════════════════════════════
+function loadOverview() {
+  if (appState.ovLoaded) return;
+  appState.ovLoaded = true;
+  const path = `MissionJeet/content/index.php?course_id=${appState.course.id}&tab=overview`;
+  const url = `${PROXY}?path=${encodeURIComponent(path)}`;
+  const container = document.getElementById("ovContainer");
+  container.innerHTML = `
+    <div class="ov-loading state-box">
+      <div class="state-loader">⏳</div>
+      <p>Loading overview...</p>
+    </div>`;
+  const iframe = document.createElement("iframe");
+  iframe.style.cssText = "width:100%;border:none;min-height:500px;display:none;";
+  iframe.onload = () => {
+    container.querySelector(".ov-loading").style.display = "none";
+    iframe.style.display = "block";
+    try {
+      const h = iframe.contentDocument?.body?.scrollHeight;
+      if (h > 100) iframe.style.height = (h + 20) + "px";
+      else iframe.style.height = "500px";
+    } catch(e) { iframe.style.height = "500px"; }
+  };
+  iframe.src = url;
+  container.appendChild(iframe);
+}
+
+// ══════════════════════════════════════
+// CONTENT — folders + videos
+// ══════════════════════════════════════
+function updateCourseBreadcrumb() {
+  // Top breadcrumb
+  let bc = `<span class="bc-link" onclick="backToLanding()">🏠 Home</span>
+            <span class="bc-sep">›</span>
+            <span class="bc-link" onclick="backToCourseRoot()">${appState.course?.name || "Course"}</span>`;
+  if (appState.folderId) {
+    bc += `<span class="bc-sep">›</span><span>${decodeURIComponent(appState.folderTitle).replace(/\+/g," ")}</span>`;
+  }
+  document.getElementById("folderBreadcrumb").innerHTML = bc;
+}
+
+function backToLanding() {
+  destroyPlayer();
+  showPage("landingPage");
+  appState.navStack = [];
+}
+
+function backToCourseRoot() {
+  if (appState.folderId) {
+    appState.folderId = "";
+    appState.folderTitle = "";
+    appState.ctLoaded = false;
+    updateCourseBreadcrumb();
+    loadCourseContent();
+  }
+  if (appState.currentTab !== "ct") switchTab("ct");
+}
+
+async function loadCourseContent() {
+  appState.ctLoaded = true;
+  document.getElementById("ctState").style.display = "block";
+  document.getElementById("ctError").style.display = "none";
+  document.getElementById("ctContent").style.display = "none";
+  document.getElementById("liveSection").style.display = "none";
+  updateCourseBreadcrumb();
+
+  try {
+    let apiPath = `MissionJeet/content/index.php?course_id=${appState.course.id}&tab=content`;
+    if (appState.folderId) {
+      apiPath += `&folder_id=${appState.folderId}&folder_title=${encodeURIComponent(appState.folderTitle)}`;
+    }
+    const res = await fetch(`${PROXY}?path=${encodeURIComponent(apiPath)}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const html = await res.text();
+    const doc = new DOMParser().parseFromString(html, "text/html");
+
+    const live = extractLive(doc);
+    const folders = extractFolders(doc);
+    const videos = extractVideos(doc);
+
+    if (!folders.length && !videos.length && !live.length) {
+      throw new Error("Koi content nahi mila.");
+    }
+
+    renderLive(live);
+    renderFolders(folders);
+    renderVideos(videos);
+
+    document.getElementById("ctState").style.display = "none";
+    document.getElementById("ctContent").style.display = "block";
+  } catch(err) {
+    document.getElementById("ctState").style.display = "none";
+    document.getElementById("ctError").style.display = "block";
+    document.getElementById("ctErrorMsg").textContent = err.message;
+  }
+}
+
+// ── EXTRACTORS ──
+function extractLive(doc) {
+  const lives = [];
+  // Look for live indicators
+  doc.querySelectorAll("[class*='live'], [class*='Live']").forEach(el => {
+    const link = el.closest("a") || el.querySelector("a");
+    if (!link) return;
+    const href = link.getAttribute("href");
+    const title = el.textContent.trim().slice(0,80);
+    if (href && title && !lives.find(l=>l.href===href)) {
+      lives.push({title, href});
+    }
+  });
+  return lives;
+}
+
+function extractFolders(doc) {
+  const folders = [];
+  const seen = new Set();
+  doc.querySelectorAll("a[href*='folder_id']").forEach(a => {
+    try {
+      const u = new URL(a.getAttribute("href"), "https://rolexcoderz.com");
+      const fid = u.searchParams.get("folder_id");
+      const ftitle = u.searchParams.get("folder_title") || a.textContent.trim();
+      if (!fid || seen.has(fid)) return;
+      seen.add(fid);
+      const img = a.querySelector("img");
+      // Fix image src if relative
+      let imgSrc = img?.getAttribute("src") || null;
+      if (imgSrc && imgSrc.startsWith("/")) imgSrc = "https://rolexcoderz.com" + imgSrc;
+      folders.push({
+        id: fid,
+        title: decodeURIComponent(ftitle.replace(/\+/g," ")),
+        img: imgSrc,
+      });
+    } catch(e) {}
+  });
+  return folders;
+}
+
+function extractVideos(doc) {
+  const videos = [];
+  const seen = new Set();
+  doc.querySelectorAll("a[href*='player.php'], a[href*='token=']").forEach((a, i) => {
+    const href = a.getAttribute("href");
+    if (!href || seen.has(href)) return;
+    seen.add(href);
+    const nameEl = a.querySelector(".vi-name,.video-title,.fi-name,span,p");
+    let title = nameEl?.textContent.trim() || a.textContent.trim() || `Video ${i+1}`;
+    title = title.replace(/\s+/g," ").trim().slice(0,80);
+    videos.push({title, href});
+  });
+  return videos;
+}
+
+// ── RENDERERS ──
+function renderLive(lives) {
+  if (!lives.length) return;
+  const section = document.getElementById("liveSection");
+  const cards = document.getElementById("liveCards");
+  section.style.display = "block";
+  cards.innerHTML = "";
+  lives.forEach(l => {
+    const btn = document.createElement("button");
+    btn.className = "live-card";
+    btn.innerHTML = `
+      <div class="live-icon">📡</div>
+      <div class="live-info">
+        <div class="live-name">${l.title}</div>
+        <div class="live-meta">Live Class • Join Now</div>
+      </div>
+      <button class="live-join" onclick="event.stopPropagation();openVideo({title:'${l.title}',href:'${l.href}'})">JOIN</button>`;
+    cards.appendChild(btn);
+  });
+}
+
+function renderFolders(folders) {
+  const wrap = document.getElementById("foldersWrap");
+  const grid = document.getElementById("folderGrid");
+  if (!folders.length) { wrap.style.display="none"; return; }
+  wrap.style.display="block";
+  grid.innerHTML="";
+  folders.forEach((f,i) => {
+    const btn = document.createElement("button");
+    btn.className="folder-card";
+    btn.style.animationDelay=`${i*0.04}s`;
+    const imgHtml = f.img
+      ? `<img class="folder-img" src="${f.img}" alt="${f.title}"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+         <div class="folder-img-ph" style="display:none">${folderIcons[i%folderIcons.length]}</div>`
+      : `<div class="folder-img-ph">${folderIcons[i%folderIcons.length]}</div>`;
+    btn.innerHTML=`${imgHtml}
+      <div class="folder-body">
+        <div class="folder-name">${f.title}</div>
+        <div class="folder-sub">Tap to open</div>
+      </div>
+      <span class="folder-arr">›</span>`;
+    btn.onclick=()=>openFolder(f);
+    grid.appendChild(btn);
+  });
+}
+
+function renderVideos(videos) {
+  const wrap = document.getElementById("videosWrap");
+  const grid = document.getElementById("videoGrid");
+  if (!videos.length) { wrap.style.display="none"; return; }
+  wrap.style.display="block";
+  grid.innerHTML="";
+  videos.forEach((v,i) => {
+    const btn = document.createElement("button");
+    btn.className="video-card";
+    btn.style.animationDelay=`${i*0.03}s`;
+    btn.innerHTML=`
+      <div class="play-btn">▶</div>
+      <div class="video-info">
+        <div class="video-name">${v.title}</div>
+        <div class="video-meta">Video Lecture</div>
+      </div>
+      <span class="vid-badge">HD</span>`;
+    btn.onclick=()=>openVideo(v);
+    grid.appendChild(btn);
+  });
+}
+
+// ══════════════════════════════════════
+// FOLDER OPEN
+// ══════════════════════════════════════
+function openFolder(f) {
+  const prevFolderId = appState.folderId;
+  const prevFolderTitle = appState.folderTitle;
+  pushNav(() => {
+    appState.folderId = prevFolderId;
+    appState.folderTitle = prevFolderTitle;
+    appState.ctLoaded = false;
+    loadCourseContent();
+  });
+  appState.folderId = f.id;
+  appState.folderTitle = f.title;
+  appState.ctLoaded = false;
+  loadCourseContent();
+}
+
+// ══════════════════════════════════════
+// VIDEO PLAYER
+// ══════════════════════════════════════
+function openVideo(v) {
+  let href = v.href;
+  // Route through proxy
+  if (href.startsWith("http") && !href.startsWith(PROXY)) {
+    try {
+      const u = new URL(href);
+      const p = u.pathname.slice(1) + u.search;
+      href = `${PROXY}?path=${encodeURIComponent(p)}`;
+    } catch(e){}
+  } else if (href.startsWith("/")) {
+    href = `${PROXY}?path=${encodeURIComponent(href.slice(1))}`;
+  }
+
+  pushNav(() => {
+    destroyPlayer();
+    showPage("coursePage");
+  });
+
+  document.getElementById("playerTitleEl").textContent = v.title;
+  document.getElementById("playerBackBtn").onclick = () => {
+    destroyPlayer();
+    showPage("coursePage");
+    appState.navStack.pop();
+  };
+
+  showPage("playerPage");
+  document.getElementById("playerLoading").style.display = "flex";
+  document.getElementById("playerError").style.display = "none";
+  document.getElementById("playerLoadingText").textContent = "Fetching video...";
+
+  // Fetch player page to extract m3u8
+  fetchVideoSrc(href, v.title);
+}
+
+async function fetchVideoSrc(proxyUrl, title) {
+  try {
+    document.getElementById("playerLoadingText").textContent = "Loading stream...";
+    const res = await fetch(proxyUrl);
+    const html = await res.text();
+
+    // Extract m3u8 URL or token from player page
+    const m3u8Match = html.match(/src:\s*['"]([^'"]+\.m3u8[^'"]*)['"]/i)
+      || html.match(/file:\s*['"]([^'"]+\.m3u8[^'"]*)['"]/i)
+      || html.match(/source:\s*['"]([^'"]+\.m3u8[^'"]*)['"]/i)
+      || html.match(/"(https?:\/\/[^"]+\.m3u8[^"]*)"/i);
+
+    if (m3u8Match) {
+      let m3u8Url = m3u8Match[1];
+      // Route m3u8 through proxy
+      if (!m3u8Url.startsWith(PROXY)) {
+        m3u8Url = `${PROXY}?path=${encodeURIComponent(m3u8Url)}`;
+      }
+      initPlayer(m3u8Url, title);
+      return;
+    }
+
+    // Try to extract token and build m3u8
+    const tokenMatch = html.match(/token['":\s]+['"]([A-Za-z0-9+/=%.]+)['"]/i);
+    const apiMatch = html.match(/videoUrl['":\s]+['"]([^'"]+)['"]/i)
+      || html.match(/hlsUrl['":\s]+['"]([^'"]+)['"]/i)
+      || html.match(/streamUrl['":\s]+['"]([^'"]+)['"]/i);
+
+    if (apiMatch) {
+      let streamUrl = apiMatch[1];
+      if (!streamUrl.startsWith(PROXY)) {
+        streamUrl = `${PROXY}?path=${encodeURIComponent(streamUrl)}`;
+      }
+      initPlayer(streamUrl, title);
+      return;
+    }
+
+    // Extract from fetch calls in JS
+    const fetchMatch = html.match(/fetch\(['"]([^'"]+)['"]\)/g);
+    if (fetchMatch) {
+      for (const fm of fetchMatch) {
+        const u = fm.match(/fetch\(['"]([^'"]+)['"]\)/)?.[1];
+        if (u && (u.includes("m3u8") || u.includes("stream") || u.includes("video"))) {
+          const streamUrl = `${PROXY}?path=${encodeURIComponent(u)}`;
+          initPlayer(streamUrl, title);
+          return;
+        }
+      }
+    }
+
+    throw new Error("Stream URL nahi mili player page mein.");
+  } catch(err) {
+    document.getElementById("playerLoading").style.display = "none";
+    document.getElementById("playerError").style.display = "flex";
+    document.getElementById("playerErrorMsg").textContent = err.message;
+  }
+}
+
+function initPlayer(m3u8Url, title) {
+  document.getElementById("playerLoadingText").textContent = "Starting player...";
+  const video = document.getElementById("playerVideo");
+
+  destroyPlayer();
+
+  if (Hls.isSupported()) {
+    const hls = new Hls({
+      xhrSetup: (xhr, url) => {
+        // Route all HLS requests through proxy
+        if (!url.startsWith(PROXY) && !url.startsWith("blob:")) {
+          const proxyUrl = `${PROXY}?path=${encodeURIComponent(url)}`;
+          xhr.open("GET", proxyUrl, true);
+        }
+      },
+      maxBufferLength: 30,
+      maxMaxBufferLength: 60,
+    });
+    appState.playerHls = hls;
+    hls.loadSource(m3u8Url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      document.getElementById("playerLoading").style.display = "none";
+      const plyr = new Plyr(video, {
+        controls: ["play","rewind","fast-forward","progress","current-time","duration","mute","volume","settings","fullscreen"],
+        settings: ["quality","speed"],
+        speed: {selected:1, options:[0.5,0.75,1,1.25,1.5,2]},
+      });
+      appState.plyrInstance = plyr;
+      video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR, (e, data) => {
+      if (data.fatal) {
+        document.getElementById("playerLoading").style.display = "none";
+        document.getElementById("playerError").style.display = "flex";
+        document.getElementById("playerErrorMsg").textContent = "Stream error: " + (data.details || "Unknown");
+      }
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    // Safari native HLS
+    video.src = m3u8Url;
+    video.addEventListener("loadedmetadata", () => {
+      document.getElementById("playerLoading").style.display = "none";
+      video.play();
+    });
+  } else {
+    document.getElementById("playerLoading").style.display = "none";
+    document.getElementById("playerError").style.display = "flex";
+    document.getElementById("playerErrorMsg").textContent = "Browser HLS support nahi hai.";
+  }
+}
+
+function destroyPlayer() {
+  if (appState.plyrInstance) { try { appState.plyrInstance.destroy(); } catch(e){} appState.plyrInstance=null; }
+  if (appState.playerHls) { try { appState.playerHls.destroy(); } catch(e){} appState.playerHls=null; }
+  const video = document.getElementById("playerVideo");
+  video.pause();
+  video.src = "";
+  video.load();
+}
+</script>
+</body>
+</html>
